@@ -117,7 +117,7 @@ class DexterityContentExporterImporter(FolderishExporterImporter):
             return
 
         dialect = 'excel'
-        stream = StringIO(objects)
+        stream = StringIO(objects.decode("utf-8"))
 
         rowiter = reader(stream, dialect)
         rows = filter(None, tuple(rowiter))

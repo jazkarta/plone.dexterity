@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import unittest
 
+from Products.GenericSetup.tests.common import DummyImportContext
+
 
 class ExportImportTests(unittest.TestCase):
 
@@ -30,7 +32,6 @@ class ExportImportTests(unittest.TestCase):
         from plone.dexterity.content import Item
         from plone.dexterity.exportimport import \
             DexterityContentExporterImporter
-        from Products.GenericSetup.tests.common import DummyImportContext
 
         class DummyItem(Item):
             def PUT(self, request, response):
@@ -39,6 +40,27 @@ class ExportImportTests(unittest.TestCase):
 
         import_context = DummyImportContext(None)
         import_context._files['.data'] = 'title: Foo'
+        importer = DexterityContentExporterImporter(item)
+        importer.import_(import_context, None, root=True)
+
+        self.assertEqual('Foo', item.Title())
+
+    def test_import_py3(self):
+        """In python 3 `.objects` is a byte array
+        """
+        # Make sure import works
+        from plone.dexterity.content import Item
+        from plone.dexterity.exportimport import \
+            DexterityContentExporterImporter
+
+        class DummyItem(Item):
+            def PUT(self, request, response):
+                self.title = 'Foo'
+        item = DummyItem('test')
+
+        import_context = DummyImportContext(None)
+        import_context._files['.data'] = 'title: Foo'
+        import_context._files['.objects'] = b'Example1,Folder\nExample2,Folder\nPage1,Folder'
         importer = DexterityContentExporterImporter(item)
         importer.import_(import_context, None, root=True)
 
