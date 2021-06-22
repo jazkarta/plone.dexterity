@@ -2,6 +2,7 @@
 import unittest
 
 from Products.GenericSetup.tests.common import DummyImportContext
+from .layers import PLONE_DEXTERITY_INTEGRATION_TESTING
 
 
 class ExportImportTests(unittest.TestCase):
@@ -45,23 +46,19 @@ class ExportImportTests(unittest.TestCase):
 
         self.assertEqual('Foo', item.Title())
 
+
+class ExportImportIntegrationTests(unittest.TestCase):
+
+    layer = PLONE_DEXTERITY_INTEGRATION_TESTING
+
     def test_import_py3(self):
         """In python 3 `.objects` is a byte array
         """
-        # Make sure import works
-        from plone.dexterity.content import Item
         from plone.dexterity.exportimport import \
             DexterityContentExporterImporter
 
-        class DummyItem(Item):
-            def PUT(self, request, response):
-                self.title = 'Foo'
-        item = DummyItem('test')
-
+        # Make sure import works in python 3
         import_context = DummyImportContext(None)
-        import_context._files['.data'] = 'title: Foo'
         import_context._files['.objects'] = b'Example1,Folder\nExample2,Folder\nPage1,Folder'
-        importer = DexterityContentExporterImporter(item)
+        importer = DexterityContentExporterImporter(self.layer["portal"])
         importer.import_(import_context, None, root=True)
-
-        self.assertEqual('Foo', item.Title())

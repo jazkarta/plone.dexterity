@@ -90,7 +90,7 @@ setup(
         "Zope",
     ],
     extras_require={
-        "test": ["plone.testing", "Products.CMFPlone", "mock;python_version<'3'"]
+        "test": ["plone.testing", "Products.CMFPlone", "mock;python_version<'3'", "plone.app.testing"]
     },
     entry_points="""
     # -*- Entry points: -*-
